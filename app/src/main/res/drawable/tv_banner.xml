@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 320x180 Android TV launcher banner: planet-and-orbit mark plus an "ORBIT TV" wordmark.
+     The wordmark is drawn as stroked paths so it needs no font. -->
+<!-- 320x180dp is the size Android TV requires for launcher banners, so VectorRaster does not apply. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:aapt="http://schemas.android.com/aapt"
+  xmlns:tools="http://schemas.android.com/tools"
+  tools:ignore="VectorRaster"
+  android:width="320dp"
+  android:height="180dp"
+  android:viewportWidth="320"
+  android:viewportHeight="180">
+  <path android:pathData="M0,0h320v180h-320z">
+    <aapt:attr name="android:fillColor">
+      <gradient
+        android:endX="320"
+        android:endY="180"
+        android:startX="0"
+        android:startY="0"
+        android:type="linear">
+        <item android:color="#FF1A2544" android:offset="0.0" />
+        <item android:color="#FF0A1022" android:offset="0.5" />
+        <item android:color="#FF04060C" android:offset="1.0" />
+      </gradient>
+    </aapt:attr>
+  </path>
+  <path android:fillColor="#80F2F5FF" android:pathData="M28,30m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0" />
+  <path android:fillColor="#60F2F5FF" android:pathData="M300,28m-0.8,0a0.8,0.8 0,1 1,1.6 0a0.8,0.8 0,1 1,-1.6 0" />
+  <path android:fillColor="#70F2F5FF" android:pathData="M296,156m-1,0a1,1 0,1 1,2 0a1,1 0,1 1,-2 0" />
+  <path android:fillColor="#50F2F5FF" android:pathData="M120,150m-0.8,0a0.8,0.8 0,1 1,1.6 0a0.8,0.8 0,1 1,-1.6 0" />
+
+  <!-- Orbit ring, back half -->
+  <group android:pivotX="70" android:pivotY="90" android:rotation="-22">
+    <path
+      android:pathData="M22,90a48,14 0,1 1,96 0"
+      android:strokeWidth="3"
+      android:strokeColor="#995CD6FF"
+      android:strokeLineCap="round" />
+  </group>
+  <!-- Planet -->
+  <path android:pathData="M70,62a28,28 0,1 1,0 56a28,28 0,1 1,0 -56z">
+    <aapt:attr name="android:fillColor">
+      <gradient
+        android:endX="88"
+        android:endY="116"
+        android:startX="52"
+        android:startY="66"
+        android:type="linear">
+        <item android:color="#FF8BE4FF" android:offset="0.0" />
+        <item android:color="#FF2E8FB8" android:offset="0.5" />
+        <item android:color="#FF12304F" android:offset="1.0" />
+      </gradient>
+    </aapt:attr>
+  </path>
+  <!-- Orbit ring, front half, and satellite -->
+  <group android:pivotX="70" android:pivotY="90" android:rotation="-22">
+    <path
+      android:pathData="M22,90a48,14 0,1 0,96 0"
+      android:strokeWidth="3"
+      android:strokeColor="#FF5CD6FF"
+      android:strokeLineCap="round" />
+    <path
+      android:fillColor="#FFF2F5FF"
+      android:pathData="M112,96.5m-3.5,0a3.5,3.5 0,1 1,7 0a3.5,3.5 0,1 1,-7 0" />
+  </group>
+
+  <!-- Wordmark "ORBIT", cap height 40, baseline y=106 -->
+  <group android:translateX="136" android:translateY="66">
+    <path
+      android:pathData="M15,0a15,20 0,1 1,0 40a15,20 0,1 1,0 -40z M44,40 L44,0 L58,0 A10,10 0,0 1,58 20 L44,20 M56,20 L70,40 M80,0 L80,40 L96,40 A10,10 0,0 0,96 20 L80,20 M80,0 L94,0 A10,10 0,0 1,94 20 M114,0 L114,40 M124,0 L152,0 M138,0 L138,40"
+      android:strokeWidth="6"
+      android:strokeColor="#FFF2F5FF"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round" />
+  </group>
+  <!-- "TV" in the accent color -->
+  <group android:translateX="137" android:translateY="122">
+    <path
+      android:pathData="M0,0 L16,0 M8,0 L8,16 M22,0 L29,16 L36,0"
+      android:strokeWidth="3.5"
+      android:strokeColor="#FF5CD6FF"
+      android:strokeLineCap="round"
+      android:strokeLineJoin="round" />
+  </group>
+</vector>
