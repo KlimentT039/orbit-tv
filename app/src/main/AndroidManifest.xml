@@ -1,15 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:tools="http://schemas.android.com/tools">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+  <!-- Runs on Android TV, and still installs on devices without the leanback feature or a touchscreen. -->
+  <uses-feature
+    android:name="android.software.leanback"
+    android:required="false" />
+  <uses-feature
+    android:name="android.hardware.touchscreen"
+    android:required="false" />
 
   <application
+    android:name=".OrbitApplication"
     android:allowBackup="true"
+    android:banner="@drawable/tv_banner"
     android:dataExtractionRules="@xml/data_extraction_rules"
     android:fullBackupContent="@xml/backup_rules"
     android:icon="@mipmap/ic_launcher"
     android:label="@string/app_name"
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
-    android:theme="@style/Theme.Orbit" />
+    android:theme="@style/Theme.Orbit">
+
+    <activity
+      android:name=".MainActivity"
+      android:banner="@drawable/tv_banner"
+      android:exported="true"
+      android:theme="@style/Theme.Orbit.Starting">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN" />
+        <category android:name="android.intent.category.LAUNCHER" />
+        <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+      </intent-filter>
+    </activity>
+  </application>
 
 </manifest>
