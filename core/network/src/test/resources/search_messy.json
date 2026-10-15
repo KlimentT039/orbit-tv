@@ -1,0 +1,80 @@
+{
+ "collection": {
+  "version": "1.1",
+  "items": [
+   {
+    "data": [
+     {
+      "nasa_id": "sparse one",
+      "title": "  Sparse   item ",
+      "media_type": "video",
+      "keywords": "Mars, Rover ,  ,Curiosity",
+      "date_created": "2012-08-06"
+     }
+    ],
+    "links": [
+     {
+      "href": "http://images-assets.nasa.gov/video/sparse one/sparse one~medium.jpg",
+      "rel": "alternate",
+      "render": "image"
+     },
+     {
+      "href": "http://images-assets.nasa.gov/video/sparse one/sparse one~thumb.jpg",
+      "rel": "preview",
+      "render": "image"
+     }
+    ]
+   },
+   {
+    "data": [
+     {
+      "title": "No id",
+      "media_type": "video"
+     }
+    ],
+    "links": []
+   },
+   {
+    "data": "oops",
+    "links": []
+   },
+   {
+    "data": [
+     {
+      "nasa_id": "an-image",
+      "title": "An image",
+      "media_type": "image"
+     }
+    ]
+   },
+   {
+    "data": [
+     {
+      "nasa_id": "html-desc",
+      "title": null,
+      "center": null,
+      "description": "<p>Line one &amp; more</p><br/>Line   two <a href=\"x\">link</a>",
+      "keywords": null,
+      "date_created": "not a date"
+     }
+    ],
+    "links": null
+   },
+   {
+    "data": [
+     {
+      "nasa_id": "sparse one",
+      "title": "Duplicate",
+      "media_type": "video"
+     }
+    ]
+   },
+   {
+    "href": "x"
+   }
+  ],
+  "metadata": {
+   "total_hits": 7
+  }
+ }
+}

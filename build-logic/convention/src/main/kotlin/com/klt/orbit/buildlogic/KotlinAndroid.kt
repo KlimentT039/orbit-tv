@@ -3,9 +3,11 @@ package com.klt.orbit.buildlogic
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
@@ -21,6 +23,10 @@ internal fun Project.configureKotlinAndroid(commonExtension: CommonExtension) {
   }
   extensions.configure<KotlinAndroidProjectExtension> {
     compilerOptions { configureOrbitCompilerOptions() }
+  }
+  // Robolectric's Android 16 runtime reads FileDescriptor internals that JDK 17+ hides by default.
+  tasks.withType<Test>().configureEach {
+    jvmArgs("--add-opens=java.base/jdk.internal.access=ALL-UNNAMED", "--add-opens=java.base/java.io=ALL-UNNAMED")
   }
   addCommonTestDependencies()
 }
@@ -40,10 +46,7 @@ internal fun Project.configureKotlinJvm() {
 private fun KotlinJvmCompilerOptions.configureOrbitCompilerOptions() {
   jvmTarget = OrbitConfig.jvmTarget
   allWarningsAsErrors = true
-  freeCompilerArgs.addAll(
-    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-    "-Xconsistent-data-class-copy-visibility",
-  )
+  freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }
 
 private fun Project.addCommonTestDependencies() {
