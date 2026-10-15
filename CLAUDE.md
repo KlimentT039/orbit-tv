@@ -141,10 +141,10 @@ Tooling notes:
   traps; drawer reachable with D-pad left.
 - Focused cards scale up with a glow border and smooth animation. Every interactive element has a
   focus state visible from 3 m (use the design-system components / `OrbitFocus` values).
-- On TV, Compose's default bring-into-view scrolls a focused item to ~30% of the viewport, which
-  pushes a hero at the top of a scrolling list partly off screen (seen in the Phase 1 showcase).
-  Home must keep the hero fully visible while it has focus (custom `BringIntoViewSpec` or a hero
-  outside the scrolling list).
+- Scrolling: Compose's default TV bring-into-view pins every focused item at ~30% of the viewport,
+  which pushes the hero off screen and parks cards outside the safe area. Vertical page lists must
+  provide `LocalBringIntoViewSpec provides OrbitScrolling.Page`; `ContentRow` already uses
+  `OrbitScrolling.Row`. `HeroBanner` reveals itself fully when focused and has a stable min height.
 - Overscan safe area: content padding from `OrbitSpacing.safeArea*` (48dp horizontal, 27dp vertical).
 - 10-foot typography from `OrbitTheme.typography`; never set raw `sp` values in features.
 - Back key handled correctly everywhere; media keys (play, pause, play/pause, FF, rewind) in player.
@@ -157,7 +157,7 @@ Dark space theme: deep navy and black backgrounds, a single accent color (cyan),
 behind the hero. Exposes `OrbitTheme`, `OrbitColors`, `OrbitTypography`, `OrbitSpacing`,
 `OrbitFocus`, `OrbitShape`, `OrbitGradients`, `OrbitIcons` (hand-built ImageVectors, no
 material-icons-extended) and components `VideoCard`, `HeroBanner`/`HeroBackdrop`, `ContentRow`,
-`LoadingShimmer`, `ErrorState`, `OrbitButton`. Add new reusable UI here rather than in features.
+`LoadingShimmer`, `ErrorState`, `OrbitButton`, plus `OrbitScrolling` (TV scroll behavior). Add new reusable UI here rather than in features.
 
 ## Phase plan
 
