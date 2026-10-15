@@ -9,10 +9,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Text
@@ -21,6 +27,7 @@ import com.klt.orbit.core.designsystem.preview.PreviewTv
 import com.klt.orbit.core.designsystem.theme.OrbitGradients
 import com.klt.orbit.core.designsystem.theme.OrbitSpacing
 import com.klt.orbit.core.designsystem.theme.OrbitTheme
+import kotlinx.coroutines.launch
 
 private const val BACKDROP_CROSSFADE_MS = 600
 private const val HERO_TEXT_WIDTH_FRACTION = 0.5f
@@ -73,7 +80,17 @@ fun HeroBanner(
   overline: String? = null,
   showBackdrop: Boolean = true,
 ) {
-  Box(modifier = modifier) {
+  // When the action gains focus, scroll the whole banner into view, not just the button, so the
+  // title and overline are never left cut off above the screen.
+  val bringIntoViewRequester = remember { BringIntoViewRequester() }
+  val scope = rememberCoroutineScope()
+  Box(
+    modifier =
+      modifier
+        .heightIn(min = HeroBannerDefaults.MinHeight)
+        .bringIntoViewRequester(bringIntoViewRequester)
+        .onFocusChanged { if (it.hasFocus) scope.launch { bringIntoViewRequester.bringIntoView() } },
+  ) {
     if (showBackdrop) {
       HeroBackdrop(imageUrl = imageUrl, modifier = Modifier.fillMaxSize())
     }
@@ -84,7 +101,7 @@ fun HeroBanner(
           .fillMaxWidth(HERO_TEXT_WIDTH_FRACTION)
           .padding(
             start = OrbitSpacing.safeAreaHorizontal,
-            top = OrbitSpacing.safeAreaVertical,
+            top = OrbitSpacing.safeAreaVertical + OrbitSpacing.xl,
             bottom = OrbitSpacing.xl,
           ),
     ) {
@@ -126,6 +143,15 @@ fun HeroBanner(
   }
 }
 
+object HeroBannerDefaults {
+  /**
+   * Tall enough for the longest content (overline, 2-line title, 3-line description, action) at
+   * the 10-foot type scale, so the banner keeps a stable height as its content changes and never
+   * squeezes the action. Shorter content leaves the extra room above the title.
+   */
+  val MinHeight = 360.dp
+}
+
 @PreviewTv
 @Composable
 private fun HeroBannerPreview() {
@@ -139,7 +165,7 @@ private fun HeroBannerPreview() {
       overline = "Jul 20, 1969 · JSC",
       actionLabel = "Play",
       onAction = {},
-      modifier = Modifier.fillMaxWidth().height(360.dp),
+      modifier = Modifier.fillMaxWidth(),
     )
   }
 }
