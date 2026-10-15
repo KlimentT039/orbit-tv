@@ -51,6 +51,14 @@ NASA Image and Video Library API, no key.
 - Pick the best playable mp4: prefer `~orig` or `~large`, fall back to `~medium`. Pick the best thumbnail.
 - Every DTO field is nullable/defaulted. Items with no playable file are filtered out or surfaced as
   an error, never a crash. Long descriptions are trimmed/clamped in the UI.
+- What Phase 2 found in the real API (handled in `core:network`, covered by fixture tests):
+  asset URLs are `http://` with raw spaces → `normalizeNasaUrl` upgrades to https and encodes;
+  search items are decoded one by one so a malformed item is skipped, not the page; `keywords` is
+  sometimes one comma-separated string; descriptions can contain HTML and run to ~5k chars; the
+  API returns HTTP 400 past its deep-pagination cap (treated as end of results); `page_size` works.
+- Stream preference is `~large` > `~orig` > `~medium` (large is the reliable web encode; orig can be
+  multi-GB or use codecs a TV can't decode). `VideoAssets.streams` keeps all of them, best first,
+  so the player can fall back.
 
 ## Modules
 
@@ -58,8 +66,8 @@ NASA Image and Video Library API, no key.
 |---|---|---|---|
 | `app` | Android app | Activity, Application, Hilt root, navigation host, drawer, manifest, Watch Next wiring | everything |
 | `core:model` | Kotlin JVM | Pure domain models (`Video`, `PlaybackProgress`, …) | — |
-| `core:common` | Kotlin JVM | Dispatchers qualifiers, `Result`/error types, shared utilities | — |
-| `domain` | Kotlin JVM | Repository interfaces + use cases | `core:model`, `core:common` |
+| `core:common` | Kotlin JVM | `@Dispatcher`/`@ApplicationScope` qualifiers, `Outcome`/`DataError` | — |
+| `domain` | Kotlin JVM | Repository interfaces + use cases; fakes in `testFixtures` | `core:model`, `core:common` (api) |
 | `core:network` | Android lib | Retrofit API, DTOs, DTO→model mappers, remote repository impls, paging sources | `domain`, `core:model`, `core:common` |
 | `core:database` | Android lib | Room DB/DAOs/entities, DataStore settings, local repository impls | `domain`, `core:model`, `core:common` |
 | `core:designsystem` | Android lib (Compose) | Theme, colors, typography, spacing, icons, reusable TV components | — |
@@ -101,6 +109,8 @@ indent, 120 cols), `config/compose/stability.conf`. SDK levels and the JVM targe
 `OrbitConfig.kt` in build-logic.
 
 Tooling notes:
+- Hilt runs with `dagger.fullBindingGraphValidation=ERROR`, so a missing binding fails the build.
+- Opt in to experimental APIs locally with `@OptIn`; there are no global opt-ins.
 - detekt is 1.23.x (2.0 is still alpha). It runs with `detekt.android.disabled=true` and a pinned
   Kotlin version on its own classpath (see `Quality.kt`), because it predates AGP 9 and Kotlin 2.4.
 - Catalog aliases for convention plugins use camelCase for nested ids
@@ -119,8 +129,12 @@ Tooling notes:
 - Screens split into a stateful `XxxRoute(viewModel = hiltViewModel())` and a stateless
   `XxxScreen(uiState, onAction)` that is previewable and UI-testable.
 - Use cases: one public `operator fun invoke`, named `VerbNounUseCase`, constructor-injected.
-- Errors: data layer catches exceptions at the boundary and returns typed results; no exception
-  reaches the UI unhandled. Offline/HTTP/parse errors map to user-facing error states with Retry.
+- Errors: repositories return `Outcome<T>` (`Success`/`Failure(DataError)`) and never throw;
+  `CancellationException` is always rethrown. Paging errors arrive as `DataErrorException`; map with
+  `Throwable.toDataError()`. Room/DataStore reads fall back to empty values on storage errors.
+- Local data: favorites and progress reference a shared `videos` snapshot table (FK + cascade) so
+  lists render offline; unreferenced snapshots are pruned in the same transaction. Timestamps come
+  from an injected `java.time.Clock`.
 - Inject `CoroutineDispatcher`s via qualifiers from `core:common`; never hardcode `Dispatchers.IO`
   in classes that need tests.
 - Visibility: default to `internal` in library modules; only expose the module's API.
@@ -131,8 +145,11 @@ Tooling notes:
 - File names match their single top-level declaration (`OrbitSpacing.kt`); `XxxDefaults` objects
   go *below* the composable they belong to.
 - Previews are `private`, annotated `@PreviewTv` (from `core:designsystem`), and wrapped in the theme.
-- Tests: fakes over mocks, Turbine for flows, `runTest` + `StandardTestDispatcher`/
-  `UnconfinedTestDispatcher` via a `MainDispatcherRule`. Test names in backticks describing behavior.
+- Tests: fakes over mocks, Turbine for flows, `runTest`. Shared fakes (`FakeVideoRepository`, …),
+  `TestData` builders and `MainDispatcherRule` live in `domain/src/testFixtures`; use them with
+  `testImplementation(testFixtures(projects.domain))`. Room and repository tests run on Robolectric
+  (SDK 36, JVM args set in build-logic); network tests use MockWebServer + JSON fixtures in
+  `core/network/src/test/resources`. Test names in backticks describing behavior.
 
 ## TV rules (apply to every screen)
 
@@ -171,7 +188,7 @@ material-icons-extended) and components `VideoCard`, `HeroBanner`/`HeroBackdrop`
 
 Status: track completed phases here.
 - [x] Phase 1 (`app` currently shows a temporary `DesignSystemShowcase`; delete it in Phase 3)
-- [ ] Phase 2
+- [x] Phase 2
 - [ ] Phase 3
 - [ ] Phase 4
 - [ ] Phase 5
