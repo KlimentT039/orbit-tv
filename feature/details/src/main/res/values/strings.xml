@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="details_play">Play</string>
+  <string name="details_play_from_start">Play from start</string>
+  <string name="details_resume">Resume from %1$s</string>
+  <string name="details_add_favorite">Add to favorites</string>
+  <string name="details_remove_favorite">Remove from favorites</string>
+  <string name="details_related">More like this</string>
+</resources>

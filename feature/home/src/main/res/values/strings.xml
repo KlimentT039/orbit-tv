@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="home_play">Play</string>
+  <string name="home_row_continue_watching">Continue watching</string>
+  <string name="home_row_favorites">Your favorites</string>
+  <string name="home_row_apollo">Apollo</string>
+  <string name="home_row_mars">Mars</string>
+  <string name="home_row_hubble">Hubble</string>
+  <string name="home_row_iss">International Space Station</string>
+  <string name="home_row_earth">Earth</string>
+  <string name="home_feed_error_title">Couldn\'t load NASA videos</string>
+</resources>

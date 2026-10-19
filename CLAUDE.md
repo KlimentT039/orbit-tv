@@ -70,7 +70,7 @@ NASA Image and Video Library API, no key.
 | `domain` | Kotlin JVM | Repository interfaces + use cases; fakes in `testFixtures` | `core:model`, `core:common` (api) |
 | `core:network` | Android lib | Retrofit API, DTOs, DTO→model mappers, remote repository impls, paging sources | `domain`, `core:model`, `core:common` |
 | `core:database` | Android lib | Room DB/DAOs/entities, DataStore settings, local repository impls | `domain`, `core:model`, `core:common` |
-| `core:designsystem` | Android lib (Compose) | Theme, colors, typography, spacing, icons, reusable TV components | — |
+| `core:designsystem` | Android lib (Compose) | Theme, components, focus/scroll helpers, `DataError` messages | `core:common` |
 | `feature:home` | Android feature | Home screen | `domain`, `core:model`, `core:designsystem`, `core:common` |
 | `feature:details` | Android feature | Details screen | same as above |
 | `feature:player` | Android feature | Player screen | same as above (+ Media3) |
@@ -111,6 +111,8 @@ indent, 120 cols), `config/compose/stability.conf`. SDK levels and the JVM targe
 Tooling notes:
 - Hilt runs with `dagger.fullBindingGraphValidation=ERROR`, so a missing binding fails the build.
 - Opt in to experimental APIs locally with `@OptIn`; there are no global opt-ins.
+- Library modules run host (unit) tests for debug only. Gradle 9's `failOnNoDiscoveredTests` is
+  relaxed only for feature modules that have no `src/test` yet.
 - detekt is 1.23.x (2.0 is still alpha). It runs with `detekt.android.disabled=true` and a pinned
   Kotlin version on its own classpath (see `Quality.kt`), because it predates AGP 9 and Kotlin 2.4.
 - Catalog aliases for convention plugins use camelCase for nested ids
@@ -145,6 +147,11 @@ Tooling notes:
 - File names match their single top-level declaration (`OrbitSpacing.kt`); `XxxDefaults` objects
   go *below* the composable they belong to.
 - Previews are `private`, annotated `@PreviewTv` (from `core:designsystem`), and wrapped in the theme.
+- Compose UI tests run under Robolectric in `src/test` (so CI runs them): `@Config(sdk = [36],
+  qualifiers = "w960dp-h540dp-land-xhdpi")`, `androidx.compose.ui.test.junit4.v2.createAndroidComposeRule`,
+  D-pad via `performKeyInput { pressKey(...) }`, navigation-return via `StateRestorationTester`.
+  `boundsInRoot` is clipped to the visible area; assert on-screen placement with `positionInRoot`
+  + `size`. Verify a regression test fails without its fix.
 - Tests: fakes over mocks, Turbine for flows, `runTest`. Shared fakes (`FakeVideoRepository`, …),
   `TestData` builders and `MainDispatcherRule` live in `domain/src/testFixtures`; use them with
   `testImplementation(testFixtures(projects.domain))`. Room and repository tests run on Robolectric
@@ -158,6 +165,14 @@ Tooling notes:
   traps; drawer reachable with D-pad left.
 - Focused cards scale up with a glow border and smooth animation. Every interactive element has a
   focus state visible from 3 m (use the design-system components / `OrbitFocus` values).
+- Focus restoration pattern (Home, Details): a small `@Stable` focus holder (`HomeFocus`,
+  `DetailsFocus`) keeps the last focused key in `rememberSaveable` plus the `FocusRequester`s.
+  Restore with `FocusRequester.tryRequestFocus()` (never throws), then `LazyListState.revealItem()`
+  — requesting focus alone does not reliably scroll a restored item into view. Re-run the reveal
+  when rows change: after navigating back, the first frame can still show the previous rows.
+- Hero: `HeroCarousel` (design system) pages with Left/Right but lets Left on the first slide and
+  Right on the last pass through (no trap), auto-advances only while focused, and keeps the same
+  focused button across slides. Back on Home moves focus to the hero before exiting.
 - Scrolling: Compose's default TV bring-into-view pins every focused item at ~30% of the viewport,
   which pushes the hero off screen and parks cards outside the safe area. Vertical page lists must
   provide `LocalBringIntoViewSpec provides OrbitScrolling.Page`; `ContentRow` already uses
@@ -174,7 +189,8 @@ Dark space theme: deep navy and black backgrounds, a single accent color (cyan),
 behind the hero. Exposes `OrbitTheme`, `OrbitColors`, `OrbitTypography`, `OrbitSpacing`,
 `OrbitFocus`, `OrbitShape`, `OrbitGradients`, `OrbitIcons` (hand-built ImageVectors, no
 material-icons-extended) and components `VideoCard`, `HeroBanner`/`HeroBackdrop`, `ContentRow`,
-`LoadingShimmer`, `ErrorState`, `OrbitButton`, plus `OrbitScrolling` (TV scroll behavior). Add new reusable UI here rather than in features.
+`LoadingShimmer`, `ErrorState`/`DataErrorState`, `OrbitButton`, `HeroCarousel`, `KeywordChip`,
+plus `OrbitScrolling`, `tryRequestFocus`/`revealItem`, `ObserveAsEvents`, `videoOverline`. Add new reusable UI here rather than in features.
 
 ## Phase plan
 
@@ -187,9 +203,9 @@ material-icons-extended) and components `VideoCard`, `HeroBanner`/`HeroBackdrop`
 7. Baseline profile, polish, README.
 
 Status: track completed phases here.
-- [x] Phase 1 (`app` currently shows a temporary `DesignSystemShowcase`; delete it in Phase 3)
+- [x] Phase 1
 - [x] Phase 2
-- [ ] Phase 3
+- [x] Phase 3 (Play buttons are wired to Details/no-op in `OrbitNavHost` until the Phase 4 player)
 - [ ] Phase 4
 - [ ] Phase 5
 - [ ] Phase 6

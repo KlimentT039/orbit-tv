@@ -82,7 +82,7 @@ internal fun parseKeywords(element: JsonElement?): List<String> {
   return raw
     .flatMap { it.split(',', ';') }
     .map { it.collapseWhitespace() }
-    .filter { it.isNotEmpty() }
+    .filter { keyword -> keyword.any { it.isLetterOrDigit() } }
     .distinctBy { it.lowercase() }
     .take(MAX_KEYWORDS)
 }

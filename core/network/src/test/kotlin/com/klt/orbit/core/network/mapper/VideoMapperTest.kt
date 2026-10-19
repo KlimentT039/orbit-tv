@@ -89,6 +89,12 @@ class VideoMapperTest {
   }
 
   @Test
+  fun `drops keywords without letters or digits`() {
+    assertThat(parseKeywords(JsonArray(listOf(JsonPrimitive("..."), JsonPrimitive("—"), JsonPrimitive("Apollo 15")))))
+      .containsExactly("Apollo 15")
+  }
+
+  @Test
   fun `caps the number of keywords`() {
     val many = JsonArray(List(50) { JsonPrimitive("k$it") })
 

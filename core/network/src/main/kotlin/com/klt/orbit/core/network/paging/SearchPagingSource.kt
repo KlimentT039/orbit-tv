@@ -22,6 +22,7 @@ internal class SearchPagingSource(
   private val json: Json,
   private val query: String,
   private val pageSize: Int,
+  private val onLoaded: (List<Video>) -> Unit = {},
 ) : PagingSource<Int, Video>() {
   private val seenIds = mutableSetOf<String>()
 
@@ -31,6 +32,7 @@ internal class SearchPagingSource(
       val collection = api.search(query = query, page = page, pageSize = pageSize).collection
       val rawItems = collection?.items.orEmpty()
       val videos = rawItems.toVideos(json).filter { seenIds.add(it.id) }
+      onLoaded(videos)
       val totalHits = collection?.metadata?.totalHits
       val hasNextLink = collection?.links.orEmpty().any { it.rel.equals("next", ignoreCase = true) }
       val reachedEnd =
