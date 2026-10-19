@@ -22,6 +22,7 @@ internal class NasaVideoRepository
   constructor(
     private val api: NasaApi,
     private val json: Json,
+    private val cache: VideoMemoryCache,
   ) : VideoRepository {
     override suspend fun getVideos(
       query: String,
@@ -35,9 +36,11 @@ internal class NasaVideoRepository
           .orEmpty()
           .toVideos(json)
           .take(limit)
+          .also(cache::putAll)
       }
 
     override suspend fun getVideo(id: String): Outcome<Video> {
+      cache.get(id)?.let { return Outcome.Success(it) }
       val result =
         networkCall {
           api
@@ -47,6 +50,7 @@ internal class NasaVideoRepository
             .orEmpty()
             .toVideos(json)
             .firstOrNull { it.id == id }
+            ?.also { cache.putAll(listOf(it)) }
         }
       return when (result) {
         is Outcome.Success -> result.value?.let { Outcome.Success(it) } ?: Outcome.Failure(DataError.NotFound)
@@ -70,7 +74,7 @@ internal class NasaVideoRepository
             prefetchDistance = SEARCH_PREFETCH_DISTANCE,
             enablePlaceholders = false,
           ),
-        pagingSourceFactory = { SearchPagingSource(api, json, query, SEARCH_PAGE_SIZE) },
+        pagingSourceFactory = { SearchPagingSource(api, json, query, SEARCH_PAGE_SIZE, onLoaded = cache::putAll) },
       ).flow
 
     companion object {

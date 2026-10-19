@@ -1,4 +1,6 @@
 import com.android.build.api.dsl.LibraryExtension
+import com.android.build.api.variant.HostTestBuilder
+import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.klt.orbit.buildlogic.OrbitConfig
 import com.klt.orbit.buildlogic.configureKotlinAndroid
 import com.klt.orbit.buildlogic.configureQuality
@@ -20,6 +22,13 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         defaultConfig.testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testOptions.targetSdk = OrbitConfig.TARGET_SDK
         lint.targetSdk = OrbitConfig.TARGET_SDK
+      }
+      extensions.configure<LibraryAndroidComponentsExtension> {
+        // Release unit tests would only repeat the debug ones (and Compose UI tests need the
+        // debug-only test activity), so libraries run host tests on debug only.
+        beforeVariants(selector().withBuildType("release")) { variant ->
+          variant.hostTests[HostTestBuilder.UNIT_TEST_TYPE]?.enable = false
+        }
       }
       configureQuality()
     }

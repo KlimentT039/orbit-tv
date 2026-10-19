@@ -43,6 +43,9 @@ dependencies {
   implementation(projects.feature.settings)
 
   implementation(libs.androidx.activity.compose)
+  implementation(libs.androidx.navigation.compose)
+  implementation(libs.coil.compose)
+  implementation(libs.coil.network.okhttp)
   implementation(libs.androidx.core.ktx)
   implementation(libs.androidx.core.splashscreen)
   implementation(libs.androidx.lifecycle.runtime.compose)

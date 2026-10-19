@@ -20,7 +20,7 @@ class NasaVideoRepositoryTest {
   @Before
   fun setUp() {
     server.start()
-    repository = NasaVideoRepository(Fixtures.api(server), NetworkJson)
+    repository = NasaVideoRepository(Fixtures.api(server), NetworkJson, VideoMemoryCache())
   }
 
   @After
@@ -76,6 +76,18 @@ class NasaVideoRepositoryTest {
 
       assertThat((result as Outcome.Success).value.id).isEqualTo("abc")
       assertThat(server.takeRequest().url.queryParameter("nasa_id")).isEqualTo("abc")
+    }
+
+  @Test
+  fun `getVideo serves videos already listed without another request`() =
+    runTest {
+      server.enqueue(Fixtures.json(Fixtures.searchPage(listOf("abc", "def"), totalHits = 2, hasNext = false)))
+      repository.getVideos("mars", limit = 10)
+
+      val result = repository.getVideo("def")
+
+      assertThat((result as Outcome.Success).value.id).isEqualTo("def")
+      assertThat(server.requestCount).isEqualTo(1)
     }
 
   @Test

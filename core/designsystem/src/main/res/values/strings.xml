@@ -4,4 +4,13 @@
   <string name="designsystem_retry">Try again</string>
   <string name="designsystem_loading">Loading</string>
   <string name="designsystem_watch_progress">%1$d%% watched</string>
+  <string name="designsystem_carousel_position">Featured %1$d of %2$d</string>
+
+  <string name="designsystem_error_network">You seem to be offline. Check your connection and try again.</string>
+  <string name="designsystem_error_http">NASA\'s servers had a problem (error %1$d). Try again in a moment.</string>
+  <string name="designsystem_error_not_found">We couldn\'t find this video.</string>
+  <string name="designsystem_error_no_playable_media">This video has no version that can be played on this TV.</string>
+  <string name="designsystem_error_invalid_data">NASA sent data we couldn\'t read. Try again later.</string>
+  <string name="designsystem_error_storage">Couldn\'t save on this device.</string>
+  <string name="designsystem_error_unknown">Something unexpected happened. Try again.</string>
 </resources>
