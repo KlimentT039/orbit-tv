@@ -21,3 +21,6 @@ captures/
 
 # JVM crash logs
 hs_err_pid*.log
+
+# Private product spec (kept locally)
+docs/SPEC.md
