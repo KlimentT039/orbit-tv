@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.Button
@@ -69,7 +70,7 @@ fun OrbitButton(
       Icon(imageVector = icon, contentDescription = null, modifier = Modifier.size(20.dp))
       Spacer(Modifier.width(OrbitSpacing.sm))
     }
-    Text(text = text, style = OrbitTheme.typography.labelLarge)
+    Text(text = text, style = OrbitTheme.typography.labelLarge, maxLines = 1, overflow = TextOverflow.Ellipsis)
   }
 }
 

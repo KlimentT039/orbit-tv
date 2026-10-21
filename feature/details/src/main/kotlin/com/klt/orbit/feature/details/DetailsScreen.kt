@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -20,6 +21,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.withFrameNanos
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
@@ -250,7 +252,12 @@ private fun DetailsActions(
   modifier: Modifier = Modifier,
 ) {
   val resumePosition = content.resumePositionMs
-  Row(modifier = modifier, horizontalArrangement = Arrangement.spacedBy(OrbitSpacing.lg)) {
+  // The info column is narrower than three buttons with a long "Resume from 1:02:03" label; without
+  // an unbounded width the last button is squeezed until its label wraps letter by letter.
+  Row(
+    modifier = modifier.wrapContentWidth(align = Alignment.Start, unbounded = true),
+    horizontalArrangement = Arrangement.spacedBy(OrbitSpacing.lg),
+  ) {
     with(focus) {
       if (content.playback.canPlay) {
         if (resumePosition != null) {

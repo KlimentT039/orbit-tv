@@ -110,6 +110,9 @@ indent, 120 cols), `config/compose/stability.conf`. SDK levels and the JVM targe
 
 Tooling notes:
 - Hilt runs with `dagger.fullBindingGraphValidation=ERROR`, so a missing binding fails the build.
+- `domain` runs the Dagger KSP processor itself, so each use case's `_Factory` is generated once.
+  Without it, every feature injecting the same use case generates its own copy and dexing fails
+  with duplicate classes.
 - Opt in to experimental APIs locally with `@OptIn`; there are no global opt-ins.
 - Library modules run host (unit) tests for debug only. Gradle 9's `failOnNoDiscoveredTests` is
   relaxed only for feature modules that have no `src/test` yet.
@@ -180,6 +183,12 @@ Tooling notes:
 - Overscan safe area: content padding from `OrbitSpacing.safeArea*` (48dp horizontal, 27dp vertical).
 - 10-foot typography from `OrbitTheme.typography`; never set raw `sp` values in features.
 - Back key handled correctly everywhere; media keys (play, pause, play/pause, FF, rewind) in player.
+- Player: ExoPlayer sits behind the `VideoPlayer` interface (`feature:player/engine`) so the
+  ViewModel is tested with `FakeVideoPlayer`. D-pad Left/Right always seek ±10 s (the transport row
+  has a single focusable, play/pause); with controls hidden the screen root holds focus. Panels
+  (error, finished, up next) own focus and disable seek keys. Back hides controls before leaving.
+  ViewModel tests clear the ViewModel at the end (`playerTest { }`): the position-polling loop would
+  otherwise keep `runTest` advancing virtual time forever.
 - Manifest: `android.software.leanback` required=false, touchscreen required=false,
   `LEANBACK_LAUNCHER` intent filter, 320x180 banner.
 
@@ -189,7 +198,8 @@ Dark space theme: deep navy and black backgrounds, a single accent color (cyan),
 behind the hero. Exposes `OrbitTheme`, `OrbitColors`, `OrbitTypography`, `OrbitSpacing`,
 `OrbitFocus`, `OrbitShape`, `OrbitGradients`, `OrbitIcons` (hand-built ImageVectors, no
 material-icons-extended) and components `VideoCard`, `HeroBanner`/`HeroBackdrop`, `ContentRow`,
-`LoadingShimmer`, `ErrorState`/`DataErrorState`, `OrbitButton`, `HeroCarousel`, `KeywordChip`,
+`LoadingShimmer`, `ErrorState`/`DataErrorState`, `OrbitButton`, `OrbitIconButton`, `HeroCarousel`,
+`KeywordChip`, `PlaybackProgressBar`, `BufferingIndicator`,
 plus `OrbitScrolling`, `tryRequestFocus`/`revealItem`, `ObserveAsEvents`, `videoOverline`. Add new reusable UI here rather than in features.
 
 ## Phase plan
@@ -205,8 +215,8 @@ plus `OrbitScrolling`, `tryRequestFocus`/`revealItem`, `ObserveAsEvents`, `video
 Status: track completed phases here.
 - [x] Phase 1
 - [x] Phase 2
-- [x] Phase 3 (Play buttons are wired to Details/no-op in `OrbitNavHost` until the Phase 4 player)
-- [ ] Phase 4
+- [x] Phase 3
+- [x] Phase 4
 - [ ] Phase 5
 - [ ] Phase 6
 - [ ] Phase 7
