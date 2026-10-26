@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="settings_title">Settings</string>
+
+  <string name="settings_section_playback">Playback</string>
+  <string name="settings_autoplay_title">Autoplay next video</string>
+  <string name="settings_autoplay_on">When a video ends, a related one starts after a short countdown</string>
+  <string name="settings_autoplay_off">Playback stops at the end of each video</string>
+
+  <string name="settings_section_history">Watch history</string>
+  <string name="settings_clear_history_title">Clear watch history</string>
+  <string name="settings_clear_history_summary">Empties Continue watching and starts every video from the beginning</string>
+  <string name="settings_clear_dialog_title">Clear watch history?</string>
+  <string name="settings_clear_dialog_message">Continue watching will be emptied and every video will start from the beginning. Your favorites are kept.</string>
+  <string name="settings_clear_confirm">Clear history</string>
+  <string name="settings_clear_cancel">Cancel</string>
+  <string name="settings_history_cleared">Watch history cleared</string>
+
+  <string name="settings_about_title">About</string>
+  <string name="settings_about_app_name">Orbit TV</string>
+  <string name="settings_about_version">Version %1$s</string>
+  <string name="settings_about_attribution">Videos and images courtesy of NASA, from the NASA Image and Video Library (images.nasa.gov).</string>
+  <string name="settings_about_disclaimer">Orbit TV is an independent app and is not affiliated with or endorsed by NASA.</string>
+</resources>

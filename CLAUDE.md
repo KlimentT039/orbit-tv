@@ -114,6 +114,8 @@ Tooling notes:
   Without it, every feature injecting the same use case generates its own copy and dexing fails
   with duplicate classes.
 - Opt in to experimental APIs locally with `@OptIn`; there are no global opt-ins.
+- `app` has Robolectric UI tests too (the drawer); they use a plain `Application` via `@Config`, so
+  no Hilt graph is needed. App build metadata reaches features as `AppInfo` (`core:common`).
 - Library modules run host (unit) tests for debug only. Gradle 9's `failOnNoDiscoveredTests` is
   relaxed only for feature modules that have no `src/test` yet.
 - detekt is 1.23.x (2.0 is still alpha). It runs with `detekt.android.disabled=true` and a pinned
@@ -189,6 +191,18 @@ Tooling notes:
   (error, finished, up next) own focus and disable seek keys. Back hides controls before leaving.
   ViewModel tests clear the ViewModel at the end (`playerTest { }`): the position-polling loop would
   otherwise keep `runTest` advancing virtual time forever.
+- Drawer (`app/navigation/OrbitNavigationDrawer`): tv-material `ModalNavigationDrawer`, a collapsed
+  icon rail that expands over the content while focused, shown only on top-level screens
+  (`TopLevelDestination`). Top-level screens are inset by `OrbitNavigationDrawerDefaults.ContentInset`.
+  Entering lands on the current screen's item (`focusRestorer`); leaving (Right, Back, re-selecting
+  the current screen) uses an explicit `FocusRequester` on the content group, because the open drawer
+  covers the screen's left edge and a D-pad move finds nothing to its right. Switching screens uses
+  `saveState`/`restoreState`, so each keeps its query, scroll and focus.
+- Grids (Search, Favorites): `GridCells.FixedSize(VideoCardDefaults.Width)` with the safe area as
+  *content* padding so focused cards are not clipped; remember the focused card with `FocusMemory`.
+  Favorites' edit mode moves focus to the card that takes a removed card's place.
+- Search: the query is a `TextFieldState` held by the ViewModel (no async StateFlow round trip for
+  text). `OrbitSearchField` opens the keyboard only on OK, and Up/Down always leave the field.
 - Manifest: `android.software.leanback` required=false, touchscreen required=false,
   `LEANBACK_LAUNCHER` intent filter, 320x180 banner.
 
@@ -198,9 +212,10 @@ Dark space theme: deep navy and black backgrounds, a single accent color (cyan),
 behind the hero. Exposes `OrbitTheme`, `OrbitColors`, `OrbitTypography`, `OrbitSpacing`,
 `OrbitFocus`, `OrbitShape`, `OrbitGradients`, `OrbitIcons` (hand-built ImageVectors, no
 material-icons-extended) and components `VideoCard`, `HeroBanner`/`HeroBackdrop`, `ContentRow`,
-`LoadingShimmer`, `ErrorState`/`DataErrorState`, `OrbitButton`, `OrbitIconButton`, `HeroCarousel`,
-`KeywordChip`, `PlaybackProgressBar`, `BufferingIndicator`,
-plus `OrbitScrolling`, `tryRequestFocus`/`revealItem`, `ObserveAsEvents`, `videoOverline`. Add new reusable UI here rather than in features.
+`LoadingShimmer`/`LoadingShimmerGrid`, `ErrorState`/`DataErrorState`, `EmptyState`, `OrbitButton`,
+`OrbitIconButton`, `HeroCarousel`, `KeywordChip`, `PlaybackProgressBar`, `BufferingIndicator`,
+`OrbitSearchField`, `OrbitListItem`/`OrbitSwitchListItem`, `OrbitConfirmDialog`,
+plus `OrbitScrolling`, `tryRequestFocus`/`revealItem`, `FocusMemory`, `ObserveAsEvents`, `videoOverline`. Add new reusable UI here rather than in features.
 
 ## Phase plan
 
@@ -217,6 +232,6 @@ Status: track completed phases here.
 - [x] Phase 2
 - [x] Phase 3
 - [x] Phase 4
-- [ ] Phase 5
+- [x] Phase 5
 - [ ] Phase 6
 - [ ] Phase 7

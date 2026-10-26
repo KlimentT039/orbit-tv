@@ -26,6 +26,9 @@ android {
   buildFeatures {
     buildConfig = true
   }
+
+  // Robolectric Compose tests for app-level UI (the navigation drawer).
+  testOptions.unitTests.isIncludeAndroidResources = true
 }
 
 dependencies {
@@ -51,6 +54,10 @@ dependencies {
   implementation(libs.androidx.lifecycle.runtime.compose)
   implementation(libs.androidx.profileinstaller)
   implementation(libs.kotlinx.collections.immutable)
+
+  testImplementation(libs.androidx.compose.ui.test.junit4)
+  testImplementation(libs.androidx.test.core)
+  testImplementation(libs.robolectric)
 
   androidTestImplementation(libs.androidx.compose.ui.test.junit4)
   androidTestImplementation(libs.androidx.test.ext.junit)

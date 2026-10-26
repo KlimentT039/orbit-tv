@@ -13,6 +13,9 @@ object OrbitFocus {
   /** Scale applied to focused buttons and chips. */
   const val CONTROL_FOCUSED_SCALE = 1.05f
 
+  /** Scale applied to focused full-width list rows; wide rows need less to read as lifted. */
+  const val LIST_ITEM_FOCUSED_SCALE = 1.02f
+
   val borderWidth = 3.dp
   val glowElevation = 16.dp
 }

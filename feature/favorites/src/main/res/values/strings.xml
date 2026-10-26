@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="favorites_title">Your favorites</string>
+  <plurals name="favorites_count">
+    <item quantity="one">%1$d video</item>
+    <item quantity="other">%1$d videos</item>
+  </plurals>
+  <string name="favorites_edit">Remove videos</string>
+  <string name="favorites_done">Done</string>
+  <string name="favorites_edit_hint">Select a video to remove it from your favorites</string>
+  <string name="favorites_remove_action">Remove from favorites</string>
+
+  <string name="favorites_empty_title">No favorites yet</string>
+  <string name="favorites_empty_message">Open any video and choose Add to favorites to keep it here.</string>
+  <string name="favorites_browse">Browse videos</string>
+</resources>

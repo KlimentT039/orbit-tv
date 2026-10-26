@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="search_placeholder">Search NASA videos</string>
+  <string name="search_placeholder_focused">Press OK to start typing</string>
+
+  <string name="search_idle_title">Explore the NASA video library</string>
+  <string name="search_idle_message">From the first Moon landing to Artemis, search thousands of NASA videos.</string>
+  <string name="search_suggestions_label">Try searching for</string>
+  <string-array name="search_suggestions">
+    <item>Apollo 11</item>
+    <item>Artemis</item>
+    <item>Black hole</item>
+    <item>Jupiter</item>
+    <item>Spacewalk</item>
+  </string-array>
+
+  <string name="search_results_title">Results for “%1$s”</string>
+  <string name="search_no_results_title">No videos found</string>
+  <string name="search_no_results_message">Nothing matches “%1$s”. Try a different or shorter search.</string>
+  <string name="search_load_more_error">Couldn\'t load more results. Try again</string>
+</resources>

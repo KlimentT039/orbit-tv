@@ -43,4 +43,20 @@ object OrbitGradients {
       0f to Color.Transparent,
       1f to OrbitPalette.SpaceBlack.copy(alpha = 0.9f),
     )
+
+  /** Behind the collapsed navigation rail: solid at the screen edge, fading into the content. */
+  val NavigationRail: Brush =
+    Brush.horizontalGradient(
+      0f to OrbitPalette.SpaceBlack,
+      0.7f to OrbitPalette.SpaceBlack.copy(alpha = 0.85f),
+      1f to Color.Transparent,
+    )
+
+  /** Dims the content while the navigation drawer is open, keeping the labels readable. */
+  val NavigationDrawerScrim: Brush =
+    Brush.horizontalGradient(
+      0f to OrbitPalette.SpaceBlack.copy(alpha = 0.95f),
+      0.6f to OrbitPalette.SpaceBlack.copy(alpha = 0.6f),
+      1f to OrbitPalette.SpaceBlack.copy(alpha = 0.3f),
+    )
 }

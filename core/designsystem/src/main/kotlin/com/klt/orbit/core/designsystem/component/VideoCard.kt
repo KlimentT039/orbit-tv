@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -26,8 +29,10 @@ import androidx.tv.material3.Border
 import androidx.tv.material3.Card
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.Glow
+import androidx.tv.material3.Icon
 import androidx.tv.material3.Text
 import com.klt.orbit.core.designsystem.R
+import com.klt.orbit.core.designsystem.icon.OrbitIcons
 import com.klt.orbit.core.designsystem.preview.PreviewTv
 import com.klt.orbit.core.designsystem.theme.OrbitFocus
 import com.klt.orbit.core.designsystem.theme.OrbitGradients
@@ -42,6 +47,9 @@ import kotlin.math.roundToInt
  *
  * @param onFocus invoked when the card gains focus, e.g. to crossfade a hero backdrop or to
  *   remember the focused item for focus restoration.
+ * @param actionIcon when set, dims the artwork and shows this icon in the middle, signalling that
+ *   clicking performs an action (such as removing the video) instead of opening it.
+ * @param actionLabel what that action does, for accessibility services.
  */
 @Composable
 fun VideoCard(
@@ -52,6 +60,8 @@ fun VideoCard(
   subtitle: String? = null,
   progress: Float? = null,
   onFocus: () -> Unit = {},
+  actionIcon: ImageVector? = null,
+  actionLabel: String? = null,
 ) {
   val colors = OrbitTheme.colors
   Card(
@@ -113,6 +123,9 @@ fun VideoCard(
           )
         }
       }
+      if (actionIcon != null) {
+        ActionOverlay(icon = actionIcon, label = actionLabel, modifier = Modifier.fillMaxSize())
+      }
       if (progress != null) {
         WatchProgressBar(
           progress = progress,
@@ -127,6 +140,29 @@ object VideoCardDefaults {
   /** Fits ~3.5 cards inside the safe area so the next card peeks in and invites scrolling. */
   val Width = 236.dp
   const val ASPECT_RATIO = 16f / 9f
+}
+
+@Composable
+private fun ActionOverlay(
+  icon: ImageVector,
+  label: String?,
+  modifier: Modifier = Modifier,
+) {
+  Box(
+    modifier = modifier.background(OrbitTheme.colors.scrim.copy(alpha = 0.55f)),
+    contentAlignment = Alignment.Center,
+  ) {
+    Icon(
+      imageVector = icon,
+      contentDescription = label,
+      tint = OrbitTheme.colors.onSurface,
+      modifier =
+        Modifier
+          .size(48.dp)
+          .background(OrbitTheme.colors.onSurface.copy(alpha = 0.18f), CircleShape)
+          .padding(OrbitSpacing.md),
+    )
+  }
 }
 
 @Composable
@@ -167,6 +203,8 @@ private fun VideoCardPreview() {
         progress = 0.4f,
         onClick = {},
       )
+      Spacer(Modifier.width(OrbitSpacing.cardGap))
+      VideoCard(title = "Mars Rover Landing", imageUrl = null, actionIcon = OrbitIcons.Close, onClick = {})
     }
   }
 }

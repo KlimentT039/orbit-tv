@@ -102,6 +102,35 @@ fun LoadingShimmer(
   }
 }
 
+/** Skeleton placeholder for a grid of [VideoCard]s, sized like the real cards. */
+@Composable
+fun LoadingShimmerGrid(
+  modifier: Modifier = Modifier,
+  rowCount: Int = 2,
+  columnCount: Int = 3,
+) {
+  val brush = rememberShimmerBrush()
+  val loading = stringResource(R.string.designsystem_loading)
+  Column(
+    modifier = modifier.semantics { contentDescription = loading },
+    verticalArrangement = Arrangement.spacedBy(OrbitSpacing.rowGap),
+  ) {
+    repeat(rowCount) {
+      Row(horizontalArrangement = Arrangement.spacedBy(OrbitSpacing.cardGap)) {
+        repeat(columnCount) {
+          Box(
+            modifier =
+              Modifier
+                .width(VideoCardDefaults.Width)
+                .aspectRatio(VideoCardDefaults.ASPECT_RATIO)
+                .background(brush, OrbitShape.Card),
+          )
+        }
+      }
+    }
+  }
+}
+
 @PreviewTv
 @Composable
 private fun LoadingShimmerPreview() {

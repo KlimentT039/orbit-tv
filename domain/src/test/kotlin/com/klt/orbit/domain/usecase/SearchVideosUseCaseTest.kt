@@ -25,4 +25,11 @@ class SearchVideosUseCaseTest {
 
       assertThat(repository.searchCalls).isEmpty()
     }
+
+  @Test
+  fun `searchable query is the normalized text, or null when too short`() {
+    assertThat(SearchVideosUseCase.searchableQuery("  space   station ")).isEqualTo("space station")
+    assertThat(SearchVideosUseCase.searchableQuery(" a ")).isNull()
+    assertThat(SearchVideosUseCase.searchableQuery("")).isNull()
+  }
 }
